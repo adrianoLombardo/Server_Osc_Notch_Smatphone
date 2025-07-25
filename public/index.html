@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <title>Pensieri sull'Immensità del Mare</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <style>
+    :root { color-scheme: dark; --vh: 1vh; }
+    *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+    html, body { height:100%; overflow:hidden; }
+    body {
+      display:flex; flex-direction:column;
+      font-family: system-ui, sans-serif;
+      color: #fff; background: #000;
+    }
+    /* sfondo video + overlay */
+    .bg-video, .bg-overlay { position: fixed; inset: 0; }
+    .bg-video {
+      width:100%; height:100%; object-fit:cover;
+      z-index:-2; opacity:0; transition:opacity .6s ease;
+      pointer-events:none;
+    }
+    .bg-video.is-playing { opacity:1; }
+    .bg-overlay { background:rgba(0,0,0,.6); z-index:-1; }
+    /* header */
+    header {
+      flex:0 0 auto;
+      padding: calc(env(safe-area-inset-top,8px)+8px) 1.5rem 1rem;
+      text-align:center; z-index:10;
+    }
+    .logo-wrap img { max-width:120px; width:100%; height:auto; }
+    header h1 {
+      margin-top:.5rem;
+      font-size: clamp(1.5rem,6vw,2.2rem);
+    }
+    /* main scrollabile */
+    main {
+      flex:1 1 auto;
+      overflow-y:auto;
+      padding:1rem 1.5rem;
+    }
+    .input-area {
+      max-width:600px; margin:0 auto 2rem;
+      display:flex; flex-direction:column; align-items:flex-start; gap:.5rem;
+    }
+    .input-area textarea {
+      width:100%; min-height:140px; border-radius:16px;
+      padding:1rem; font-size:1.1rem; border:none; outline:none;
+      resize:vertical; background:rgba(0,0,0,.7); color:#fff;
+      box-shadow:0 0 0 2px rgba(255,255,255,.15);
+    }
+    .input-area textarea::placeholder { color:rgba(255,255,255,.5); }
+    .input-area .meta {
+      font-size:.9rem; opacity:.8; width:100%; text-align:left;
+    }
+    .input-area button {
+      padding:.7rem 1.5rem; border:none; border-radius:16px;
+      background:#0af; color:#000; font-size:1rem; font-weight:600;
+      cursor:pointer; transition:transform .08s; margin-top:.5rem;
+    }
+    .input-area button:active { transform:scale(.97); }
+    .input-area button:disabled { opacity:.4; cursor:not-allowed; }
+    /* testi concetto */
+    .concept { max-width:1000px; margin:0 auto 3rem; text-align:left; z-index:5; }
+    .concept h2 {
+      text-align:center; margin-bottom:1rem; font-size:1.4rem;
+    }
+    .concept-grid {
+      display:grid; grid-template-columns:1fr 1fr; gap:2rem;
+      font-size:.95rem; line-height:1.5;
+    }
+    .concept-grid h3 { margin-bottom:.5rem; font-size:1rem; font-weight:700; }
+    .concept-grid p { margin-bottom:1rem; }
+    @media(max-width:900px) { .concept-grid { grid-template-columns:1fr; } }
+    /* footer come blocco flex */
+    footer {
+      flex:0 0 auto;
+      text-align:center;
+      padding: calc(env(safe-area-inset-bottom,8px)+4px) 1.5rem;
+      font-size:.9rem; color:rgba(255,255,255,.7);
+      z-index:10; pointer-events:none;
+    }
+  </style>
+</head>
+<body>
+  <video class="bg-video" id="bgvideo" autoplay muted playsinline loop preload="auto" poster="/img/logo.png">
+    <source src="/media/mare.mp4" type="video/mp4">
+  </video>
+  <div class="bg-overlay"></div>
+
+  <header>
+    <div class="logo-wrap"><img src="/img/logo.png" alt="Logo"></div>
+    <h1>Write your thought<br>about the infinite</h1>
+  </header>
+
+  <main>
+    <div class="input-area">
+      <textarea id="thought" maxlength="120" placeholder="Es. The sea is a deep breath…"></textarea>
+      <p class="meta" id="char-left">120 characters remaining</p>
+      <button id="send" disabled>Send</button>
+      <div id="sent" role="status" aria-live="polite"></div>
+    </div>
+
+    <section class="concept">
+      <h2>Liquid Thoughts</h2>
+      <div class="concept-grid">
+        <div class="col en">
+          <h3>English</h3>
+          <p>Stepping into the room is like crossing a thin membrane and finding yourself inside an ocean of light. A sea of particles, shifting through blues and azures, breathes slowly: it pulses, condenses, disperses. Bodies are sensed, pixelated, turned into clouds of points—no longer fixed individuals, but currents touching other currents. As visitors move, they generate flows, eddies, orbits: the digital water follows them, holds them, welcomes them.</p>
+            <p>At the heart of the experience, everyone is invited to leave a thought. A QR code is the threshold: the phone becomes a shell through which to whisper words to the sea. The phrases sent—like messages in a bottle—surface in the projection, dissolving and recomposing among the particles, becoming part of a shared current. It’s a choir of intimacies that doesn’t shout but emerges; an archipelago of memories, desires, questions, floating in the same water.</p>
+            <p>The gesture is simple, but its meaning is vast: what we think—often invisible, private, mute—finds a body, a movement, a shared habitat. Thoughts settle into the sea like luminous sediment, tracing an emotional seabed that shifts with each presence, with the cadence of footsteps, with the distances people choose (or refuse) to keep. The particles are not just light: they are a metaphor for what composes and escapes us, for how we are made of fragments, memories, breaths, molecules, and stories.</p>
+            <p>In this installation, the boundary between inside and outside loosens: the body becomes landscape, thought becomes matter, written voice turns visible flow. There is no single center: the collective composition forms and reforms, like a sea that receives and returns, that neither judges nor fixes, but circulates.</p>
+            <p>“Liquid Thoughts” is an invitation to recognize ourselves as part of a sensitive ecosystem: every gesture generates waves, every word ripples the surface, every presence alters the field’s geometry. Nothing remains the same: like water, like us.</p>
+            <p>In the end, traces remain. Traces of passages, of shared thoughts, of reflections in motion. And the intuition that, perhaps, our identity is less solid than we think—yet precisely for that reason, more capable of touching, blending, transforming. Together. In open water.
+          </div>
+          <div class="col it">
+            <h3>Italiano</h3>
+            <p>Entrare nella stanza è come attraversare una membrana sottile e ritrovarsi dentro un oceano di luce. Un mare di particelle, che scivola tra blu e azzurri, respira lentamente: pulsa, si addensa, si disperde. I corpi vengono percepiti, pixelati, trasformati in nuvole di punti — non più individui fissi, ma correnti che sfiorano altre correnti. Muovendosi, i visitatori generano flussi, gorghi, orbite: l’acqua digitale li segue, li contiene, li accoglie.</p>
+            <p>Al cuore dell’esperienza, ognuno è invitato a lasciare un pensiero. Un QR code è la soglia: il telefono diventa una conchiglia attraverso cui sussurrare parole al mare. Le frasi inviate — come messaggi in bottiglia — affiorano nella proiezione, dissolvendosi e ricomponendosi tra le particelle, diventando parte di una corrente condivisa. È un coro di intimità che non grida, ma emerge; un arcipelago di memorie, desideri, domande, che galleggia nella stessa acqua.</p>
+            <p>Il gesto è semplice, ma il suo significato è vasto: ciò che pensiamo — spesso invisibile, privato, muto — trova un corpo, un movimento, un habitat comune. I pensieri si depositano nel mare come sedimenti luminosi, tracciando un fondale emotivo che muta con ogni presenza, con la cadenza dei passi, con le distanze che scegliamo (o rifiutiamo) di mantenere. Le particelle non sono solo luce: sono la metafora di ciò che ci compone e ci sfugge, del modo in cui siamo fatti di frammenti, memorie, respiri, molecole e storie.</p>
+            <p>In questa installazione, il confine tra dentro e fuori si allenta: il corpo diventa paesaggio, il pensiero materia, la voce scritta flusso visibile. Non c’è un centro unico: la composizione collettiva si forma e si riforma, come un mare che accoglie e restituisce, che non giudica e non fissa, ma circola.</p>
+            <p>“Pensieri Liquidi” è un invito a riconoscerci parte di un ecosistema sensibile: ogni gesto genera onde, ogni parola increspa la superficie, ogni presenza altera la geometria del campo. Nulla resta identico: come l’acqua, come noi.</p>
+            <p>Alla fine, restano tracce. Tracce di passaggi, di pensieri condivisi, di riflessi in movimento. E l’intuizione che, forse, la nostra identità è meno solida di quanto crediamo — e proprio per questo più capace di toccare, mescolarsi, trasformarsi. Insieme. In mare aperto.ri paragrafi </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>Adriano Lombardo</footer>
+
+  <script>
+    // fix mobile 100vh
+    function setVh(){
+      document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+    }
+    setVh(); window.addEventListener('resize', setVh);
+
+    // video autoplay helper
+    const bgvid = document.getElementById('bgvideo');
+    document.addEventListener('DOMContentLoaded', ()=>{
+      const p = bgvid.play();
+      if(p?.then) p.then(()=> bgvid.classList.add('is-playing'))
+        .catch(()=> document.addEventListener('pointerdown', ()=> bgvid.play().then(()=> bgvid.classList.add('is-playing')), { once:true }));
+    });
+
+    // invio semplice senza slot
+    const txt = document.getElementById('thought');
+    const btn = document.getElementById('send');
+    const left = document.getElementById('char-left');
+    const esito = document.getElementById('sent');
+
+    txt.addEventListener('input', ()=>{
+      const len = txt.value.trim().length;
+      left.textContent = `${120-len} characters remaining`;
+      btn.disabled = !len;
+    });
+
+    btn.addEventListener('click', async ()=>{
+      const text = txt.value.trim(); if(!text) return;
+      btn.disabled = true;
+      try {
+        const res = await fetch('/api/thought', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ text })
+        });
+        if(!res.ok) throw new Error((await res.json()).error||'Error');
+        esito.textContent = '✅ Sent!';
+        txt.value = ''; left.textContent = '120 characters remaining';
+        setTimeout(()=> esito.textContent = '', 2000);
+      } catch(e) {
+        esito.textContent = e.message;
+        setTimeout(()=> esito.textContent = '', 3000);
+      } finally { btn.disabled = false; }
+    });
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <title>Pensieri sull'Immensità del Mare</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+  <style>
+    :root { color-scheme: dark; }
+    *{box-sizing:border-box;margin:0;padding:0;}
+
+    body {
+      font-family: system-ui, sans-serif;
+      color:#fff;
+      background:#000;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+      overflow:hidden;
+      text-align:center;
+      padding:1.5rem;
+    }
+
+    /* --- Video background --- */
+    .bg-video {
+      position:fixed;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      z-index:-2;
+      opacity:0;
+      transition:opacity .6s ease;
+      pointer-events:none;
+    }
+    .bg-video.is-playing {
+      opacity:1;
+    }
+
+    /* Overlay scurente per leggibilità testo */
+    .bg-overlay {
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.6);
+      z-index:-1;
+      pointer-events:none;
+    }
+
+    /* --- Logo top center --- */
+    .logo-wrap {
+      position:fixed;
+      top:1rem;
+      left:50%;
+      transform:translateX(-50%);
+      z-index:10;
+      text-align:center;
+      pointer-events:none;
+    }
+    .logo-wrap img {
+      max-width:min(180px,40vw);
+      height:auto;
+      width:100%;
+    }
+
+    /* --- Contenuto centrale --- */
+    .content {
+      width:100%;
+      max-width:600px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:1.25rem;
+      z-index:5;
+      margin-top:5rem; /* lascia spazio al logo in alto */
+    }
+
+    .tagline {
+      font-size:clamp(1.2rem,5vw,2rem);
+      line-height:1.2;
+      max-width:22ch;
+      margin-inline:auto;
+    }
+
+    textarea {
+      width:100%;
+      min-height:140px;
+      border-radius:16px;
+      padding:1rem;
+      font-size:1.2rem;
+      border:none;
+      outline:none;
+      resize:vertical;
+      background:rgba(0,0,0,.7);
+      color:#fff;
+      box-shadow:0 0 0 2px rgba(255,255,255,.15);
+    }
+    textarea::placeholder {
+      color:rgba(255,255,255,.5);
+    }
+
+    button {
+      padding:.9rem 3rem;
+      border:none;
+      border-radius:16px;
+      background:#0af;
+      color:#000;
+      font-size:1.2rem;
+      font-weight:600;
+      cursor:pointer;
+      transition:transform .08s ease;
+    }
+    button:active {
+      transform:scale(.97);
+    }
+    button:disabled {
+      opacity:.4;
+      cursor:not-allowed;
+      transform:none;
+    }
+
+    #sent {
+      min-height:1.5em;
+      font-size:1rem;
+      color:#0f0;
+    }
+
+    /* --- Firma in basso al centro --- */
+    .footer-name {
+      position:fixed;
+      bottom:1rem;
+      left:50%;
+      transform:translateX(-50%);
+      font-size:1rem;
+      color:rgba(255,255,255,.7);
+      z-index:5;
+      pointer-events:none;
+      white-space:nowrap;
+    }
+
+    @media (min-height:700px) {
+      textarea{min-height:160px;}
+      button{font-size:1.3rem;}
+    }
+  </style>
+</head>
+<body>
+  <!-- Video di sfondo -->
+  <video
+    class="bg-video"
+    id="bgvideo"
+    autoplay
+    muted
+    playsinline
+    loop
+    preload="auto"
+    poster="/img/logo.png"
+  >
+    <source src="/media/mare.mp4" type="video/mp4">
+    <!-- <source src="/media/mare.webm" type="video/webm"> -->
+  </video>
+  <div class="bg-overlay" aria-hidden="true"></div>
+
+  <!-- Logo top center -->
+  <div class="logo-wrap">
+    <img src="/img/logo.png" alt="Logo">
+  </div>
+
+  <!-- Contenuto centrale -->
+  <main class="content">
+    <h1 class="tagline">Scrivi il tuo pensiero<br>sull'infinito</h1>
+
+    <textarea id="thought" placeholder="Es. Il mare è un respiro infinito…"></textarea>
+    <button id="send" disabled>Invia</button>
+    <div id="sent" role="status" aria-live="polite"></div>
+  </main>
+
+  <!-- Firma -->
+  <div class="footer-name">Adriano Lombardo</div>
+
+  <script>
+    // --- UI invio testo ---
+    const t   = document.getElementById('thought');
+    const btn = document.getElementById('send');
+    const ok  = document.getElementById('sent');
+
+    t.addEventListener('input', () => {
+      btn.disabled = !t.value.trim();
+    });
+
+    btn.addEventListener('click', async () => {
+      const text = t.value.trim();
+      if (!text) return;
+      try {
+        const r = await fetch('/api/thought', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({text})
+        });
+        if (!r.ok) throw new Error('Errore invio');
+        ok.textContent = '✅ Inviato!';
+      } catch {
+        ok.textContent = '⚠️ Errore, riprova.';
+      }
+      t.value='';
+      btn.disabled=true;
+      setTimeout(()=> ok.textContent='', 2500);
+    });
+
+    // --- Autoplay video helper ---
+    const bgvid = document.getElementById('bgvideo');
+
+    function tryPlayVideo() {
+      if (!bgvid) return;
+      const p = bgvid.play();
+      if (p && typeof p.then === "function") {
+        p.then(() => {
+          bgvid.classList.add('is-playing');
+        }).catch(() => {
+          // Autoplay bloccato: attiva al primo tap utente
+          document.addEventListener('pointerdown', userStartVideo, { once:true });
+        });
+      }
+    }
+
+    function userStartVideo() {
+      bgvid.play().then(()=>{
+        bgvid.classList.add('is-playing');
+      });
+    }
+
+    // Prova appena la pagina carica
+    document.addEventListener('DOMContentLoaded', tryPlayVideo);
+  </script>
+</body>
+</html>
+

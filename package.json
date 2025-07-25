@@ -1,0 +1,41 @@
+{
+  "name": "notch-osc-qr-project",
+  "version": "1.0.0",
+  "description": "Invia pensieri da smartphone a Notch via OSC.",
+  "type": "module",
+  "main": "app.js",
+  "bin": "start.cjs",
+  "scripts": {
+    "start": "node start.cjs",
+    "dev": "nodemon app.js",
+    "clean:dist": "rimraf dist && mkdir dist",
+    "copy:assets": "copyfiles -u 1 \"public/**/*\" dist && copyfiles config.env dist",
+    "build:exe": "npm run clean:dist && pkg start.cjs --targets node18-win-x64 --output dist/notch-osc-server && npm run copy:assets"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.0",
+    "express": "^4.21.2",
+    "ip": "^2.0.1",
+    "leo-profanity": "^1.8.0",
+    "osc-js": "^2.0.5",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "copyfiles": "^2.4.1",
+    "cors": "^2.8.5",
+    "minimist": "^1.2.8",
+    "nodemon": "^3.1.0",
+    "pkg": "^5.8.1",
+    "rimraf": "^5.0.5"
+  },
+  "pkg": {
+    "assets": [
+      "public/**/*"
+    ],
+    "scripts": [
+      "start.cjs",
+      "app.js",
+      "config-utils.js"
+    ]
+  }
+}
