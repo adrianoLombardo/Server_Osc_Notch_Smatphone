@@ -1,0 +1,6 @@
+node_modules/
+node-v*/
+dist/
+config.env
+state.json
+.env*
