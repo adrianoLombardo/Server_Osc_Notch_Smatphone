@@ -8,6 +8,7 @@
   "scripts": {
     "start": "node start.cjs",
     "run": "node runner.js",
+    "cli": "node cli.js",
     "dev": "nodemon app.js",
     "clean:dist": "rimraf dist && mkdir dist",
     "copy:assets": "copyfiles -u 1 \"public/**/*\" dist && copyfiles config.env dist",

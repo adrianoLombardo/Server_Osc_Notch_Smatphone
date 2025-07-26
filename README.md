@@ -23,3 +23,11 @@ npm start
 ```
 
 Le porte e l'host di destinazione possono essere configurati nel file `config.env`.
+
+Per un'interfaccia in stile **cmd** che consente di avviare o fermare il server e modificare IP/porta di Notch:
+
+```bash
+npm run cli
+```
+
+Segui i semplici menu testuali per inserire i parametri e avviare il server.
