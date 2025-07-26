@@ -7,7 +7,7 @@
   "bin": "start.cjs",
   "scripts": {
     "start": "node start.cjs",
-    "run": "node runner.js",
+    "run": "node runner.cjs",
     "cli": "node cli.js",
     "dev": "nodemon app.js",
     "clean:dist": "rimraf dist && mkdir dist",
