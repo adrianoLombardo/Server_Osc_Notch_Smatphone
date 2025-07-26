@@ -31,3 +31,11 @@ npm run cli
 ```
 
 Segui i semplici menu testuali per inserire i parametri e avviare il server.
+
+Per una piccola interfaccia a finestre (**TUI**) con pulsanti Start/Stop e un riquadro dei log:
+
+```bash
+npm run tui
+```
+
+Premi `q` o `Ctrl+C` per uscire.

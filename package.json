@@ -9,12 +9,14 @@
     "start": "node start.cjs",
     "run": "node runner.js",
     "cli": "node cli.js",
+    "tui": "node tui.js",
     "dev": "nodemon app.js",
     "clean:dist": "rimraf dist && mkdir dist",
     "copy:assets": "copyfiles -u 1 \"public/**/*\" dist && copyfiles config.env dist",
     "build:exe": "npm run clean:dist && pkg start.cjs --targets node18-win-x64 --output dist/notch-osc-server && npm run copy:assets"
   },
   "dependencies": {
+    "blessed": "^0.1.81",
     "dotenv": "^17.2.0",
     "express": "^4.21.2",
     "ip": "^2.0.1",
