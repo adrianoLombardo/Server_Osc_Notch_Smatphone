@@ -4,6 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import http from "http";
 import ip from "ip";
+import fs from "fs";
 import QRCode from "qrcode";
 import OSC from "osc-js";
 import dotenv from "dotenv";
@@ -31,12 +32,15 @@ leoProfanity.add([
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
 if (!process.pkg) dotenv.config();
+const STATE_FILE = path.join(__dirname, "state.json");
 
 const HTTP_PORT   = parseInt(process.env.HTTP_PORT  ?? "3001", 10);
 const NOTCH_HOST  = process.env.NOTCH_HOST           ?? "127.0.0.1";
 const NOTCH_PORT  = parseInt(process.env.NOTCH_PORT  ?? "8000", 10);
 const MAX_STREAMS = parseInt(process.env.MAX_STREAMS ?? "50", 10);
 
+const MAX_QUEUE = parseInt(process.env.MAX_QUEUE ?? "100", 10);
+const MAX_TEXT_LENGTH = parseInt(process.env.MAX_TEXT_LENGTH ?? "120", 10);
 console.log("DEBUG HOST/PORT:", { NOTCH_HOST, NOTCH_PORT, HTTP_PORT, MAX_STREAMS });
 
 /* ─── Express & static ─── */
@@ -63,6 +67,10 @@ function sendOsc(id, txt) {
 
 /* ─── Round-robin slot ─── */
 let nextId = 1;
+try {
+  const st = JSON.parse(fs.readFileSync(STATE_FILE, "utf8"));
+  if (st.nextId) nextId = st.nextId;
+} catch {}
 function allocateSlot() {
   const id = nextId;
   nextId = nextId % MAX_STREAMS + 1;
@@ -75,6 +83,8 @@ app.post("/api/thought", (req, res) => {
   if (!text) return res.status(400).json({ error: "Testo mancante" });
   if (leoProfanity.check(text)) return res.status(400).json({ error: "Contenuto offensivo" });
 
+  if (text.length > MAX_TEXT_LENGTH) return res.status(400).json({ error: "Testo troppo lungo" });
+  if (queue.length >= MAX_QUEUE) return res.status(503).json({ error: "Coda piena, riprova" });
   const id = allocateSlot();
   queue.push({ id, txt: text });
   return res.sendStatus(204);
@@ -106,3 +116,10 @@ http.createServer(app).listen(HTTP_PORT, () => {
   console.log(`Slot (round-robin):   1..${MAX_STREAMS}`);
   console.log("----------------------------------------");
 });
+function saveState() {
+  try { fs.writeFileSync(STATE_FILE, JSON.stringify({ nextId }), "utf8"); } catch (e) { console.error("Errore salvataggio stato:", e); }
+}
+process.on("SIGINT", () => { saveState(); process.exit(); });
+process.on("SIGTERM", () => { saveState(); process.exit(); });
+process.on("uncaughtException", err => { console.error("Uncaught:", err); saveState(); process.exit(1); });
+process.on("unhandledRejection", err => { console.error("Unhandled rejection:", err); });
